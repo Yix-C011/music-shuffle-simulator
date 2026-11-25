@@ -18,6 +18,27 @@ This project investigates this phenomenon by comparing two shuffle algorithms th
 Try the interactive simulator directly in your browser. No installation required.
 
 
+## Application Preview
+
+### Playlist Editor
+
+Customize artist distributions and create playlists for your experiments.
+
+![Playlist Editor](screenshots/playlist.png)
+
+### Interactive Shuffle Player
+
+Generate shuffles and visualize consecutive same-artist repetitions.
+
+![Shuffle Player](screenshots/shuffle.png)
+
+### Monte Carlo Simulation
+
+Conduct thousands of trials, visualize statistical outcomes, and compare shuffle algorithms.
+
+![Monte Carlo Simulation](screenshots/simulation.png)
+
+
 ## Features
 
 - Customizable playlists with adjustable artist distributions
