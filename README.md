@@ -10,9 +10,13 @@ Music listeners often expect shuffle algorithms to distribute songs by the same 
 
 This project investigates this phenomenon by comparing two shuffle algorithms through mathematical probability, computational experiments, and interactive data visualization.
 
+
 ## Live Demo
 
-Coming soon via GitHub Pages.
+[Launch the Music Shuffle Simulator](https://yix-c011.github.io/music-shuffle-simulator/)
+
+Try the interactive simulator directly in your browser. No installation required.
+
 
 ## Features
 
@@ -122,9 +126,12 @@ No installation or additional configuration is required.
 
 ## Project Structure
 
+```
 music-shuffle-simulator/
 ├── index.html
 └── README.md
+```
+
 
 ## Learning Outcomes
 
