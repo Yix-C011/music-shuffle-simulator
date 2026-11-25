@@ -149,6 +149,10 @@ No installation or additional configuration is required.
 
 ```
 music-shuffle-simulator/
+├── screenshots/
+│   ├── playlist.png
+│   ├── shuffle.png
+│   └── simulation.png
 ├── index.html
 └── README.md
 ```
