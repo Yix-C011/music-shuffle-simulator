@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Music Shuffle Simulator</title>
+<style>
+:root{--bg:#eee4e0;--panel:rgba(255,250,247,.78);--panel2:#f6ece8;--text:#292524;--muted:#756b68;--line:rgba(104,82,77,.20);--accent:#b77f78;--blue:#8198a8;--orange:#b98c65;--red:#b66d70;--green:#829b88}
+*{box-sizing:border-box}html{min-height:100%;background:var(--bg)}body{margin:0;min-height:100vh;color:var(--text);font:15px/1.55 Inter,"Helvetica Neue",Arial,sans-serif;background:radial-gradient(ellipse at 12% 7%,rgba(255,255,255,.95) 0,rgba(255,255,255,0) 34%),radial-gradient(ellipse at 88% 18%,rgba(210,174,167,.62) 0,rgba(210,174,167,0) 36%),linear-gradient(135deg,#eee5e1 0%,#dfcbc6 48%,#eee5df 100%);background-attachment:fixed;position:relative}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.34;background:radial-gradient(ellipse 18% 46% at 96% 62%,rgba(255,255,255,.65),transparent 72%),radial-gradient(ellipse 13% 35% at 2% 72%,rgba(255,255,255,.55),transparent 72%);z-index:0}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:auto;padding:34px 22px 64px}.hero{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:25px;padding:24px 26px 27px;border:1px solid rgba(255,255,255,.7);border-radius:24px;background:linear-gradient(120deg,rgba(255,250,247,.66),rgba(255,255,255,.26));box-shadow:0 18px 55px rgba(91,67,61,.08);backdrop-filter:blur(10px)}.eyebrow{color:#916761;font-size:11px;letter-spacing:.19em;text-transform:uppercase;font-weight:700}.hero h1{font-family:Georgia,"Times New Roman",serif;font-weight:400;font-size:clamp(34px,5vw,56px);letter-spacing:-.055em;line-height:.98;margin:13px 0 13px}.hero p{color:#665b58;max-width:700px;margin:10px 0 0}.pill{border:1px solid rgba(145,103,97,.42);color:#76544f;border-radius:999px;padding:8px 14px;font-size:11px;white-space:nowrap;background:rgba(255,255,255,.48)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.panel{background:var(--panel);border:1px solid rgba(255,255,255,.82);border-radius:20px;padding:20px;box-shadow:0 12px 34px rgba(91,67,61,.09);backdrop-filter:blur(12px)}.panel h2{font-family:Georgia,"Times New Roman",serif;font-size:22px;font-weight:400;letter-spacing:-.025em;margin:0 0 4px}.sub{color:var(--muted);font-size:13px;margin:0 0 16px}.wide{grid-column:1/-1}.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:end}.field{display:flex;flex-direction:column;gap:5px;min-width:130px;flex:1}.field label{font-size:11px;color:#766865;font-weight:700;letter-spacing:.04em}input,select,button{font:inherit}input,select{width:100%;background:rgba(255,255,255,.78);color:var(--text);border:1px solid rgba(125,96,89,.25);border-radius:12px;padding:10px 12px;outline:none}input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(183,127,120,.12)}button{border:1px solid #a87973;border-radius:999px;padding:10px 17px;font-size:12px;font-weight:700;letter-spacing:.01em;cursor:pointer;background:#a97872;color:#fffaf8;transition:.18s}button:hover{filter:brightness(1.05);transform:translateY(-1px);box-shadow:0 5px 14px rgba(130,83,77,.16)}button.secondary{background:rgba(255,255,255,.62);color:#76544f;border:1px solid rgba(145,103,97,.38)}button.ghost{background:transparent;border:1px solid rgba(145,103,97,.38);color:#76544f;padding:7px 12px}button:disabled{opacity:.55;cursor:wait;transform:none;box-shadow:none}.artist-row{display:grid;grid-template-columns:1fr 100px 38px;gap:8px;margin:8px 0}.artist-row input{min-width:0}.remove{background:#f1dfdc;color:#9b5c5d;border-color:#e1c4c0;padding:6px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:15px}.stat{background:rgba(255,255,255,.55);border:1px solid rgba(125,96,89,.16);border-radius:15px;padding:12px}.stat .label{font-size:10px;color:#887975;text-transform:uppercase;letter-spacing:.09em}.stat .value{font-family:Georgia,"Times New Roman",serif;font-size:27px;font-weight:400;margin-top:2px;font-variant-numeric:tabular-nums;color:#493c39}.stat small{color:var(--muted);font-size:11px}.bar{height:9px;border-radius:99px;background:#eadbd7;overflow:hidden;margin-top:8px}.bar>i{display:block;height:100%;background:var(--accent);border-radius:99px}.track{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}.song{border:1px solid rgba(125,96,89,.24);border-radius:11px;padding:7px 9px;font-size:12px;background:rgba(255,255,255,.7);min-width:55px}.song.repeat{border-color:#c27b7e;background:#f4e0df;color:#754346}.song .artist{font-weight:700}.song small{display:block;color:var(--muted);font-size:10px}.legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px;color:var(--muted);font-size:12px}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}.canvas-wrap{position:relative;height:260px;background:rgba(255,255,255,.56);border:1px solid rgba(125,96,89,.18);border-radius:15px;padding:8px}.canvas-wrap canvas{width:100%;height:100%}.note{font-size:12px;color:var(--muted);margin-top:10px}.resultline{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.tag{font-size:11px;border:1px solid var(--line);border-radius:99px;padding:4px 8px;color:var(--muted)}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.tabs button.active{background:#a97872;color:#fffaf8}.tabs button:not(.active){background:rgba(255,255,255,.65);color:#76544f;border-color:rgba(145,103,97,.3)}.hidden{display:none!important}.progress{height:7px;background:#eadbd7;border-radius:99px;overflow:hidden;margin-top:12px}.progress i{display:block;height:100%;width:0;background:#a97872}.footer{color:var(--muted);font-size:12px;text-align:center;margin-top:22px}
+@media(max-width:780px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}.hero{display:block;padding:20px}.pill{display:inline-block;margin-top:14px}.stats{grid-template-columns:repeat(2,1fr)}}
+
+/* Sculptural architectural scene + crisp cut-corner interface */
+:root{--bg:#d9d4d2;--panel:rgba(250,249,246,.79);--panel2:#edf8f7;--text:#292b2c;--muted:#687276;--line:rgba(83,112,122,.25);--accent:#76c9c8;--blue:#87b8cf;--orange:#c8a69a;--red:#bd8585;--green:#91aaa0}
+html{background:#c8d4d6}
+body{background:linear-gradient(180deg,rgba(241,224,220,.12),rgba(177,196,202,.12));background-attachment:fixed}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;background:linear-gradient(180deg,rgba(248,236,231,.18) 0%,rgba(248,236,231,.06) 44%,rgba(106,139,153,.10) 100%)}
+.scene{position:fixed;inset:0;z-index:0;overflow:hidden;background:#d9c5c1}.scene svg{width:100%;height:100%;display:block}
+.wrap{max-width:1240px;padding-top:26px}
+.hero{position:relative;overflow:hidden;min-height:250px;align-items:center;padding:36px 42px 38px;border:0;border-radius:0;clip-path:polygon(0 0,92% 0,100% 22%,100% 100%,9% 100%,0 76%);background:linear-gradient(105deg,rgba(255,249,246,.80),rgba(246,251,250,.60));box-shadow:0 18px 40px rgba(54,76,84,.13);backdrop-filter:blur(7px)}
+.hero:after{content:"";position:absolute;right:0;bottom:0;width:16%;height:26%;background:rgba(125,193,205,.20);clip-path:polygon(0 100%,100% 0,100% 100%);pointer-events:none}
+.eyebrow{color:#588b8e}.hero h1{color:#252b2d;font-size:clamp(36px,5vw,60px)}.hero p{color:#536267;max-width:660px}.pill{border:0;border-radius:0;padding:10px 17px;color:#315e64;background:rgba(193,246,243,.85);clip-path:polygon(0 0,91% 0,100% 28%,100% 100%,9% 100%,0 72%);font-size:11px}
+.grid{gap:18px}.panel{position:relative;border:0;border-radius:0;padding:23px 24px 25px;background:rgba(250,252,250,.84);clip-path:polygon(0 0,94% 0,100% 12%,100% 100%,7% 100%,0 88%);box-shadow:0 12px 30px rgba(54,76,84,.12);filter:drop-shadow(0 8px 12px rgba(58,79,88,.10));backdrop-filter:blur(10px)}
+.panel h2{color:#293638}.sub{color:#657477}
+input,select{border-radius:0;border:1px solid rgba(87,139,147,.32);background:rgba(255,255,255,.84);padding:11px 12px;clip-path:polygon(0 0,96% 0,100% 20%,100% 100%,4% 100%,0 80%)}
+input:focus,select:focus{border-color:#6fc8c6;box-shadow:0 0 0 2px rgba(111,200,198,.18)}
+button{border:0;border-radius:0;padding:11px 18px;background:#72c9c7;color:#173f43;clip-path:polygon(0 0,91% 0,100% 25%,100% 100%,9% 100%,0 75%);font-weight:700;box-shadow:0 4px 12px rgba(69,132,139,.12)}
+button:hover{filter:brightness(1.04);transform:translateY(-1px);box-shadow:0 6px 16px rgba(69,132,139,.18)}
+button.secondary,button.tabs{background:rgba(220,241,240,.88);color:#426c70;border:0}button.ghost{background:transparent;color:#426c70;border:1px solid rgba(87,139,147,.42)}button:disabled{opacity:.55}
+.artist-row input{clip-path:none}.remove{background:#f0dedd;color:#925d60;clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}
+.stat{border:0;border-radius:0;background:rgba(225,244,242,.74);clip-path:polygon(0 0,94% 0,100% 18%,100% 100%,6% 100%,0 82%)}.stat .label{color:#648386}.stat .value{color:#2c4b4e}
+.bar,.progress{border-radius:0;background:#d5e7e5}.bar>i,.progress i{border-radius:0;background:#72c9c7}
+.song{border-radius:0;background:rgba(255,255,255,.82);border:1px solid rgba(87,139,147,.25);clip-path:polygon(0 0,94% 0,100% 20%,100% 100%,6% 100%,0 80%)}.song.repeat{background:#f4e2df;border-color:#bd8585;color:#794d50}
+.canvas-wrap{border-radius:0;border:0;background:rgba(235,247,246,.78);clip-path:polygon(0 0,96% 0,100% 12%,100% 100%,4% 100%,0 88%)}
+.tag{border-radius:0}.tabs button{border-radius:0;clip-path:polygon(0 0,92% 0,100% 24%,100% 100%,8% 100%,0 76%)}.tabs button.active{background:#72c9c7;color:#173f43}
+.footer{color:#526b70}
+@media(max-width:780px){.hero{padding:25px 24px;clip-path:polygon(0 0,92% 0,100% 12%,100% 100%,8% 100%,0 88%)}.panel{padding:19px 18px}.scene svg{width:auto;min-width:100%;height:100%;transform:translateX(-12%)}}
+
+
+/* Guided, animated workflow: the simulator behaves like a sequence of scenes, not a long article. */
+.scene:after{content:"";position:absolute;left:-35%;right:-35%;bottom:0;height:37%;pointer-events:none;opacity:.32;background:repeating-linear-gradient(174deg,transparent 0 19px,rgba(255,255,255,.22) 20px 22px,transparent 23px 43px);mix-blend-mode:screen;animation:waterGlide 18s ease-in-out infinite alternate}
+@keyframes waterGlide{from{transform:translateX(-2%) translateY(0);opacity:.20}to{transform:translateX(3%) translateY(-7px);opacity:.42}}
+.stage-nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0 0 17px;position:relative;z-index:2}
+.stage-step{position:relative;text-align:left;min-height:66px;padding:12px 16px 12px 48px;background:rgba(249,252,250,.72);color:#45666a;border:1px solid rgba(255,255,255,.76);clip-path:polygon(0 0,94% 0,100% 22%,100% 100%,6% 100%,0 78%);box-shadow:0 8px 22px rgba(54,76,84,.08);transition:background .25s,transform .25s,box-shadow .25s,opacity .25s}
+.stage-step .step-no{position:absolute;left:15px;top:13px;font:italic 22px Georgia,serif;color:#6cb9b8}
+.stage-step .step-name{display:block;font:17px Georgia,serif;line-height:1.1}
+.stage-step .step-hint{display:block;font-size:10px;letter-spacing:.06em;text-transform:uppercase;opacity:.72;margin-top:5px}
+.stage-step.active{background:rgba(191,244,240,.94);color:#254e52;box-shadow:0 10px 25px rgba(69,132,139,.17);transform:translateY(-2px)}
+.stage-step.complete .step-no{color:#b07f76}
+#stageHost{display:block;min-height:420px}
+.stage-view{display:none;opacity:0;transform:translateY(18px) scale(.99);filter:blur(3px)}
+.stage-view.active{display:block;animation:stageArrive .62s cubic-bezier(.2,.75,.2,1) forwards}
+@keyframes stageArrive{to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+.stage-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:start}
+.stage-grid>.wide{grid-column:1/-1}
+.stage-controls{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-top:17px;padding:13px 15px;background:rgba(245,251,249,.72);border:1px solid rgba(255,255,255,.7);clip-path:polygon(0 0,97% 0,100% 24%,100% 100%,3% 100%,0 76%)}
+.stage-controls .stage-caption{font-size:11px;color:#5d7477;letter-spacing:.04em}
+.stage-controls button{min-width:112px}
+.stage-controls button:disabled{opacity:.28}
+.stage-view .panel{animation:panelSettle .7s ease both}
+.stage-view.active .panel:nth-child(2){animation-delay:.08s}
+.stage-view.active .panel:nth-child(3){animation-delay:.14s}
+@keyframes panelSettle{from{opacity:.55;transform:translateY(9px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:780px){.stage-nav{gap:6px}.stage-step{padding:10px 7px 10px 34px;min-height:62px}.stage-step .step-no{left:9px;top:11px;font-size:19px}.stage-step .step-name{font-size:14px}.stage-step .step-hint{font-size:8px}.stage-grid{grid-template-columns:1fr}.stage-grid>.wide{grid-column:auto}.stage-controls{padding:10px;gap:8px}.stage-controls button{min-width:88px;padding:10px 12px}}
+@media(prefers-reduced-motion:reduce){.scene:after,.stage-view.active,.stage-view .panel{animation:none!important;transition:none!important}.stage-view.active{opacity:1;transform:none;filter:none}}
+
+
+/* Large architectural frame panels inspired by the user's reference. Small controls retain their existing cut-corner treatment. */
+:root{--bg:#d8d0cf;--panel:rgba(250,247,244,.88);--panel2:#f2e9e6;--text:#302a2d;--muted:#756b70;--line:rgba(105,83,96,.24);--accent:#9a788d;--blue:#8799aa;--orange:#b89572;--red:#b77e83;--green:#8c9b8e}
+.eyebrow{color:#8b687d}
+.hero{clip-path:none!important;border:0!important;border-radius:0!important;background:rgba(250,247,244,.86)!important;box-shadow:0 15px 38px rgba(55,43,52,.12)!important;padding:38px 48px 46px!important;position:relative;isolation:isolate}
+.hero:before,.panel:before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,#9a788d 0 5px,transparent 5px 15px,#9a788d 15px 19px,transparent 19px calc(100% - 19px),#9a788d calc(100% - 19px) calc(100% - 15px),transparent calc(100% - 15px) calc(100% - 5px),#9a788d calc(100% - 5px) 100%);opacity:.72}
+.hero:after{right:0;bottom:0;width:100%;height:7px;z-index:-1;clip-path:none;background:linear-gradient(90deg,transparent 0 5%,#9a788d 5% 7%,transparent 7% 9%,#9a788d 9% 91%,transparent 91% 93%,#9a788d 93% 95%,transparent 95% 100%);opacity:.75}
+.hero h1{color:#302a2d}.hero p{color:#62585e}.pill{background:rgba(233,222,229,.9);color:#624b5e}
+.panel{clip-path:none!important;border:0!important;border-radius:0!important;background:rgba(250,247,244,.88)!important;box-shadow:0 13px 32px rgba(55,43,52,.10)!important;filter:none!important;backdrop-filter:blur(9px);padding:28px 42px 36px!important;position:relative;isolation:isolate;overflow:visible}
+.panel:before{background:linear-gradient(90deg,#9a788d 0 5px,transparent 5px 15px,#9a788d 15px 19px,transparent 19px calc(100% - 19px),#9a788d calc(100% - 19px) calc(100% - 15px),transparent calc(100% - 15px) calc(100% - 5px),#9a788d calc(100% - 5px) 100%);opacity:.66}
+.panel:after{content:"";position:absolute;left:5%;right:5%;bottom:0;height:6px;z-index:-1;pointer-events:none;background:linear-gradient(90deg,transparent 0 3%,#9a788d 3% 5%,transparent 5% 7%,#9a788d 7% 93%,transparent 93% 95%,#9a788d 95% 97%,transparent 97% 100%);opacity:.68}
+.panel h2{color:#342b33}.sub{color:#756a72}
+/* Keep the smaller components angular and compact rather than giving them the large frame. */
+.stat{background:rgba(236,228,232,.82);color:#493b47}.stat .label{color:#806c7b}.stat .value{color:#493b47}
+.bar,.progress{background:#e3d9df}.bar>i,.progress i{background:#9a788d}
+.song{border-color:rgba(129,103,122,.28)}.song.repeat{background:#f2e1df;border-color:#b77e83;color:#794d50}
+.canvas-wrap{background:rgba(239,233,235,.84);border:0;clip-path:none!important;position:relative;padding:12px}
+button{background:#927287;color:#fffafc;box-shadow:0 4px 12px rgba(85,62,79,.13)}button:hover{box-shadow:0 6px 16px rgba(85,62,79,.18)}button.secondary,button.tabs{background:rgba(235,225,231,.94);color:#634d60;border:0}button.ghost{color:#634d60;border-color:rgba(129,103,122,.42)}
+input,select{border-color:rgba(129,103,122,.32)}input:focus,select:focus{border-color:#9a788d;box-shadow:0 0 0 2px rgba(154,120,141,.18)}
+.stage-step{color:#655365}.stage-step.active{background:rgba(226,213,224,.96);color:#4e3c50}.stage-step .step-no{color:#9a788d}
+.stage-controls{background:rgba(247,241,243,.84)}.stage-controls .stage-caption{color:#756879}
+.tabs button.active{background:#927287;color:#fffafc}.footer{color:#62585e}
+@media(max-width:780px){.hero{padding:28px 28px 36px!important}.panel{padding:24px 30px 32px!important}}
+
+
+/* Spotify-inspired shuffle deck: controls are functional playback through the generated ordering. */
+.player-panel{padding-top:26px!important}.player-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:16px}.player-kicker{font-size:9px;font-weight:800;letter-spacing:.19em;color:#94788b}.player-heading h2{margin:4px 0}.player-live{font-size:9px;letter-spacing:.12em;color:#7b6877;white-space:nowrap;padding:7px 10px;border:1px solid rgba(154,120,141,.25);background:rgba(255,255,255,.5)}.player-live i{display:inline-block;width:6px;height:6px;border-radius:50%;background:#8caa91;margin-right:6px;box-shadow:0 0 0 3px rgba(140,170,145,.15)}
+.player-shell{background:linear-gradient(135deg,rgba(53,46,57,.97),rgba(83,68,83,.96) 58%,rgba(105,82,98,.96));color:#fbf5f7;padding:22px 25px 15px;box-shadow:0 16px 35px rgba(54,42,55,.20);position:relative;overflow:hidden}.player-shell:after{content:"";position:absolute;width:280px;height:280px;border:1px solid rgba(255,255,255,.08);border-radius:50%;right:-90px;top:-150px;box-shadow:0 0 0 22px rgba(255,255,255,.025),0 0 0 50px rgba(255,255,255,.018);pointer-events:none}.player-top{display:flex;align-items:center;gap:20px;position:relative;z-index:1}.cover-art{width:112px;height:112px;flex:0 0 112px;position:relative;overflow:hidden;background:linear-gradient(145deg,#b99baa,#796d82 60%,#d1b6a9);box-shadow:0 8px 22px rgba(0,0,0,.24)}.cover-art:before,.cover-art:after{content:"";position:absolute;background:rgba(255,255,255,.14);transform:rotate(-35deg)}.cover-art:before{width:180px;height:22px;left:-25px;top:23px}.cover-art:after{width:160px;height:12px;left:-10px;top:75px}.cover-disc{position:absolute;width:74px;height:74px;border-radius:50%;background:repeating-radial-gradient(circle,#28232d 0 2px,#49404d 3px 4px);right:-13px;top:15px;box-shadow:0 4px 14px #332b37}.cover-disc:after{content:"";position:absolute;width:14px;height:14px;left:30px;top:30px;border-radius:50%;background:#c7a9b7;border:3px solid #4b414e}.cover-label{position:absolute;left:9px;bottom:8px;font:8px/1.35 Georgia,serif;letter-spacing:.12em;color:#fff8f5}.player-meta{min-width:0}.player-title{font:clamp(22px,3vw,31px)/1.12 Georgia,serif;letter-spacing:-.03em;margin:6px 0 5px;color:#fff9fa}.player-artist{font-size:13px;color:#d9cbd5}.player-state{font-size:10px;color:#b8aab7;margin-top:12px;letter-spacing:.08em;text-transform:uppercase}.player-timeline{position:relative;z-index:1;margin-top:20px}.timeline-labels{display:flex;justify-content:space-between;color:#c7b9c5;font-size:10px;font-variant-numeric:tabular-nums}.player-seek{display:block!important;width:100%!important;height:5px!important;padding:0!important;margin:8px 0 0!important;appearance:none!important;border:0!important;clip-path:none!important;background:linear-gradient(90deg,#c6a8b9 0%,#c6a8b9 var(--seek,0%),rgba(255,255,255,.22) var(--seek,0%),rgba(255,255,255,.22) 100%)!important;cursor:pointer}.player-seek::-webkit-slider-thumb{appearance:none;width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid #c6a8b9;box-shadow:0 1px 5px #201b24}.player-seek::-moz-range-thumb{width:10px;height:10px;border-radius:50%;background:#fff;border:2px solid #c6a8b9}.player-controls{display:flex;align-items:center;justify-content:center;gap:20px;margin:16px 0 13px;position:relative;z-index:1}.player-shell button{clip-path:none!important;box-shadow:none!important;transform:none!important}.player-icon{width:30px;height:30px;padding:5px!important;background:transparent!important;color:#e4d8e1!important;opacity:.82}.player-icon:hover{opacity:1;background:rgba(255,255,255,.09)!important}.player-icon svg,.player-play svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.player-play{width:46px;height:46px;padding:12px!important;border-radius:50%!important;background:#f8eff5!important;color:#4b3b4b!important;display:grid;place-items:center}.player-play svg{fill:currentColor;stroke:none}.player-bottom{display:flex;justify-content:space-between;padding-top:10px;border-top:1px solid rgba(255,255,255,.13);font-size:8px;letter-spacing:.15em;color:#b9aab8;position:relative;z-index:1}.player-options{display:flex;align-items:end;gap:12px;margin:15px 0 2px}.player-options .field{max-width:270px}.player-options label{letter-spacing:.12em!important}.player-panel .song{transition:opacity .2s,transform .2s,border-color .2s}.player-panel .song.is-current{outline:2px solid #9a788d;outline-offset:1px;transform:translateY(-2px)}.player-panel .song.is-upcoming{opacity:.58}
+@media(max-width:600px){.player-heading{display:block}.player-live{display:inline-block;margin-top:8px}.player-shell{padding:17px 15px 13px}.cover-art{width:82px;height:82px;flex-basis:82px}.cover-disc{width:58px;height:58px;right:-12px;top:11px}.cover-disc:after{left:23px;top:23px}.player-controls{gap:13px}.player-options{align-items:stretch;flex-direction:column}.player-options .field{max-width:none}.player-options button{width:100%}}
+
+</style>
+</head>
+<body><div class="scene" aria-hidden="true"><svg viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+<defs>
+ <linearGradient id="wall" x2="0" y2="1"><stop stop-color="#f2dcd7"/><stop offset=".72" stop-color="#d9bdb8"/><stop offset="1" stop-color="#c7b3b2"/></linearGradient>
+ <linearGradient id="water" x2="0" y2="1"><stop stop-color="#b8cbd0"/><stop offset=".32" stop-color="#9eafb8"/><stop offset="1" stop-color="#d7d5d4"/></linearGradient>
+ <linearGradient id="window" x2="0" y2="1"><stop stop-color="#c8e4f3"/><stop offset="1" stop-color="#f5dce2"/></linearGradient>
+ <linearGradient id="reflection" x2="0" y2="1"><stop stop-color="#f4d8d5" stop-opacity=".45"/><stop offset="1" stop-color="#d8e9ed" stop-opacity=".08"/></linearGradient>
+ <filter id="soft"><feGaussianBlur stdDeviation="15"/></filter>
+ <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".7" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values=".5 0 0 0 .5 .5 0 0 0 .5 .5 0 0 0 .5 0 0 0 .10 0"/></filter>
+ <clipPath id="waterClip"><path d="M0 635H1600V1000H0Z"/></clipPath>
+</defs>
+<rect width="1600" height="1000" fill="url(#wall)"/>
+<ellipse cx="1280" cy="130" rx="420" ry="260" fill="#fff1e9" opacity=".38" filter="url(#soft)"/>
+<!-- distant architecture and openings -->
+<path d="M0 0H1600V638H0Z" fill="#ead4d0" opacity=".18"/>
+<path d="M70 635V230Q70 105 190 105Q310 105 310 230V635Z" fill="#bda9a8" opacity=".48"/>
+<path d="M92 635V230Q92 128 190 128Q288 128 288 230V635Z" fill="url(#window)"/>
+<path d="M95 500Q175 435 286 488V635H95Z" fill="#c6c2d0" opacity=".62"/>
+<path d="M95 525Q190 475 286 520V635H95Z" fill="#9faebd" opacity=".45"/>
+<path d="M1000 0H1110V375H1000Z" fill="#bca7a4" opacity=".35"/>
+<path d="M1020 0H1092V355H1020Z" fill="url(#window)"/>
+<path d="M1235 115H1320V430H1235Z" fill="#bda9a6" opacity=".35"/>
+<path d="M1250 130H1305V412H1250Z" fill="url(#window)"/>
+<!-- broad sculptural stairs -->
+<path d="M490 610L760 365L1030 610Z" fill="#bfa9a5" opacity=".5"/>
+<path d="M475 615H1055L1000 585H530Z" fill="#f2e3df"/>
+<path d="M520 585H1010L960 558H570Z" fill="#e9d7d2"/>
+<path d="M565 558H965L920 532H610Z" fill="#f5e8e4"/>
+<path d="M610 532H920L880 507H650Z" fill="#e8d5d1"/>
+<path d="M650 507H880L845 484H685Z" fill="#f5e8e4"/>
+<path d="M685 484H845L815 462H715Z" fill="#e7d3cf"/>
+<path d="M715 462H815L790 443H740Z" fill="#f7ebe7"/>
+<!-- waterline and distant reflections -->
+<path d="M0 635Q220 620 430 638T850 632T1250 638T1600 630V1000H0Z" fill="url(#water)"/>
+<g clip-path="url(#waterClip)" opacity=".54">
+ <path d="M70 638V880Q190 915 300 1000H0V638Z" fill="#d8b9bd" opacity=".55"/>
+ <path d="M1020 635V820Q1055 875 1080 1000H930Q990 820 980 635Z" fill="url(#reflection)"/>
+ <path d="M1250 635V800Q1310 890 1350 1000H1190Q1245 820 1210 635Z" fill="#d9c3c7" opacity=".5"/>
+ <path d="M480 635L510 1000H720L830 635Z" fill="#f3e0dc" opacity=".23"/>
+ <path d="M0 680Q250 665 520 690T1040 680T1600 687" stroke="#f8efec" stroke-width="8" opacity=".35" fill="none"/>
+ <path d="M0 742Q240 726 460 746T900 740T1300 750T1600 742" stroke="#e8e2e0" stroke-width="5" opacity=".55" fill="none"/>
+ <path d="M0 815Q280 800 520 822T1000 813T1600 820" stroke="#e8eff0" stroke-width="4" opacity=".55" fill="none"/>
+ <path d="M0 900Q200 885 430 905T900 900T1300 910T1600 900" stroke="#f6e9e5" stroke-width="7" opacity=".48" fill="none"/>
+ <g stroke="#f5e8e4" stroke-width="3" opacity=".45"><path d="M80 710h210M350 765h310M900 715h180M1150 780h330M200 865h180M720 940h260"/><path d="M40 955h110M500 690h140M1040 865h220M1360 930h190"/></g>
+</g>
+<!-- smooth sculptural stones -->
+<path d="M1135 655Q1165 590 1235 592Q1315 600 1345 654Q1358 685 1310 697Q1230 714 1160 690Q1125 678 1135 655Z" fill="#c7bcb2"/>
+<path d="M1155 642Q1195 604 1240 610Q1280 615 1300 648Q1250 636 1200 665Z" fill="#e6d9ce" opacity=".72"/>
+<path d="M1430 700Q1475 655 1540 671Q1595 685 1625 732L1600 780H1450Q1400 750 1430 700Z" fill="#c9beb6"/>
+<rect width="1600" height="1000" filter="url(#grain)" opacity=".17"/>
+</svg></div><main class="wrap">
+<header class="hero"><div><div class="eyebrow">Probability · Monte Carlo · Music</div><h1>Does a random shuffle<br>really look random?</h1><p>Experiment with playlist distributions, compare two shuffle strategies, and see how repeated trials connect simulated averages to theoretical expectations.</p></div><div class="pill">Interactive classroom simulator</div></header>
+<nav class="stage-nav" aria-label="Simulator steps">
+  <button class="stage-step active" type="button" data-stage="0" aria-current="step"><span class="step-no">01</span><span class="step-name">Your playlist</span><span class="step-hint">Set up the songs</span></button>
+  <button class="stage-step" type="button" data-stage="1"><span class="step-no">02</span><span class="step-name">Make a shuffle</span><span class="step-hint">See the repeats</span></button>
+  <button class="stage-step" type="button" data-stage="2"><span class="step-no">03</span><span class="step-name">Run the experiment</span><span class="step-hint">Compare the results</span></button>
+</nav>
+<div class="grid" id="stageHost">
+<section class="panel"><h2>1. Build your playlist</h2><p class="sub">Choose an example or edit the number of songs assigned to each artist. Every trial uses this same playlist.</p>
+<div class="controls"><div class="field"><label for="preset">Example playlist</label><select id="preset"><option value="20">20-song example (editable)</option><option value="1000">Video 2 example (1,000 songs)</option></select></div><button class="secondary" id="reset">Reset example</button></div>
+<div id="artists"></div><div class="controls" style="margin-top:10px"><button class="secondary" id="addArtist">+ Add artist</button><div class="field" style="min-width:100px;max-width:150px"><label>Total songs</label><input id="totalSongs" value="20" readonly></div></div>
+<div class="note">Song titles are generated automatically from each artist's name and song number. The 20-song example starts with an editable 5 / 5 / 5 / 5 distribution because Video 1 specifies 20 songs across four artists but does not state their individual counts. Use the Video 2 preset for the 300 / 200 / 150 / 350 example.</div>
+</section>
+<section class="panel player-panel"><div class="player-heading"><div><div class="player-kicker">YOUR SHUFFLE · PLAYBACK VIEW</div><h2>2. Listen through the shuffle</h2><p class="sub">Generate an ordering, then step through it like a playlist to spot neighboring repeats.</p></div><span class="player-live"><i></i> INTERACTIVE PLAYER</span></div>
+<div class="player-shell">
+  <div class="player-top"><div class="cover-art"><div class="cover-orbit"></div><div class="cover-disc"><span></span></div><div class="cover-label">SIDE A<br>SHUFFLE STUDY</div></div>
+    <div class="player-meta"><div class="player-kicker">NOW PLAYING</div><div class="player-title" id="playerTitle">Your shuffle is ready</div><div class="player-artist" id="playerArtist">Generate a shuffle to begin</div><div class="player-state" id="playerState">No track selected</div></div>
+  </div>
+  <div class="player-timeline"><div class="timeline-labels"><span id="playerPosition">0 / 0 songs</span><span id="playerDuration">—</span></div><input id="playerSeek" class="player-seek" type="range" min="0" max="0" value="0" aria-label="Move through shuffled songs"></div>
+  <div class="player-controls"><button class="player-icon" id="playerShuffleMode" title="Switch shuffle algorithm" aria-label="Switch shuffle algorithm"><svg viewBox="0 0 24 24"><path d="M4 7h2.5c4.5 0 6.5 10 11 10H20m-3-3 3 3-3 3M4 17h2.5c1.7 0 3-1.4 4.2-3M14 10c1-1.5 2-3 3.5-3H20m-3-3 3 3-3 3"/></svg></button><button class="player-icon" id="playerPrev" title="Previous song" aria-label="Previous song"><svg viewBox="0 0 24 24"><path d="M6 5v14M19 6 8 12l11 6z"/></svg></button><button class="player-play" id="playerPlay" title="Play sequence" aria-label="Play sequence"><svg id="playerPlayIcon" viewBox="0 0 24 24"><path d="m8 5 11 7-11 7z"/></svg></button><button class="player-icon" id="playerNext" title="Next song" aria-label="Next song"><svg viewBox="0 0 24 24"><path d="M18 5v14M5 6l11 6-11 6z"/></svg></button><button class="player-icon" id="playerReplay" title="Replay from beginning" aria-label="Replay from beginning"><svg viewBox="0 0 24 24"><path d="M4 11a8 8 0 1 1 2 6M4 5v6h6"/></svg></button></div>
+  <div class="player-bottom"><span id="playerMethodLabel">TRUE RANDOM</span><span>SONG-BY-SONG PREVIEW</span></div>
+</div>
+<div class="player-options"><div class="field"><label for="method">SHUFFLE ALGORITHM</label><select id="method"><option value="random">True random (Fisher–Yates)</option><option value="avoid">Repeat-avoiding</option></select></div><button id="shuffleOnce">Generate new shuffle</button></div>
+<div class="stats"><div class="stat"><div class="label">Songs</div><div class="value" id="oneSongs">20</div></div><div class="stat"><div class="label">Adjacent pairs</div><div class="value" id="onePairs">19</div></div><div class="stat"><div class="label">Repetitions</div><div class="value" id="oneRepeats">—</div></div><div class="stat"><div class="label">Repeat rate</div><div class="value" id="oneRate">—</div></div></div>
+<div id="oneTrack" class="track" aria-live="polite"></div><div class="legend"><span><i class="dot" style="background:var(--red)"></i>Same artist as previous song</span><span><i class="dot" style="background:var(--blue)"></i>Different artist</span></div><p class="note" id="oneExplain">Generate a shuffle to see how adjacent songs are counted.</p>
+</section>
+<section class="panel wide"><h2>3. Monte Carlo simulation</h2><p class="sub">One trial means generating a fresh ordering of all songs and counting adjacent same-artist pairs. Trials are independent.</p>
+<div class="controls"><div class="field" style="max-width:190px"><label for="trials">Number of trials</label><select id="trials"><option value="10">10</option><option value="100">100</option><option value="1000" selected>1,000</option><option value="10000">10,000</option></select></div><div class="field" style="max-width:230px"><label for="simMethod">Algorithm to simulate</label><select id="simMethod"><option value="random">True random only</option><option value="avoid">Repeat-avoiding only</option><option value="both">Both algorithms</option></select></div><button id="runSim">Run simulation</button><button class="secondary" id="clearSim">Clear results</button></div>
+<div class="progress" id="progressBox"><i id="progressBar"></i></div><div class="note" id="status" aria-live="polite">Ready. Choose a trial count and run the experiment.</div>
+<div class="stats"><div class="stat"><div class="label">Theoretical E(R)</div><div class="value" id="theory">—</div><small>True random shuffle</small></div><div class="stat"><div class="label">Simulated mean</div><div class="value" id="meanRandom">—</div><small>True random</small></div><div class="stat"><div class="label">Repeat-avoiding mean</div><div class="value" id="meanAvoid">—</div><small>Simulated result</small></div><div class="stat"><div class="label">Trials completed</div><div class="value" id="done">0</div><small>Per selected algorithm</small></div></div>
+<div class="note" id="theoryExplain">The theoretical expected number for a true random shuffle is calculated from the artist counts: Σ nᵢ(nᵢ − 1) / N.</div>
+</section>
+<section class="panel"><h2>4. Running average</h2><p class="sub">Watch the sample average change as more shuffles are included.</p><div class="canvas-wrap"><canvas id="averageChart" aria-label="Running average chart"></canvas></div><p class="note">The purple line is the running mean; the dashed gold line is the theoretical expected value for a true random shuffle. The average can move up or down; it is not guaranteed to get closer at every step.</p></section>
+<section class="panel"><h2>5. Distribution of outcomes</h2><p class="sub">Each bar shows the number of trials with a particular repetition count or range of counts.</p><div class="canvas-wrap"><canvas id="histChart" aria-label="Histogram of repetition counts"></canvas></div><p class="note">A histogram shows variation between individual shuffles. When both algorithms are selected, these graphs show True Random. Compare both simulated means in the results above.</p></section>
+<section class="panel wide"><div class="resultline"><div><h2>6. Compare the algorithms</h2><p class="sub">The repeat-avoiding method excludes the previous artist whenever at least one other artist still has songs available.</p></div><span class="tag">Same playlist · Different selection rules</span></div><div class="tabs"><button class="active" data-tab="randomTab">True random</button><button data-tab="avoidTab">Repeat-avoiding</button></div><div id="randomTab"><p>Every ordering of the individual songs is equally likely. Consecutive songs by the same artist can occur naturally.</p><strong id="randomSummary">Run a simulation to see the true-random average.</strong></div><div id="avoidTab" class="hidden"><p>At each step, the algorithm chooses uniformly from the remaining songs whose artist differs from the previous song, if any such songs remain. If no alternatives remain, it chooses from all remaining songs.</p><strong id="avoidSummary">Run a simulation to see the repeat-avoiding average.</strong></div><p class="note">Important: the two algorithms do not have the same probability distribution. The repeat-avoiding method is not a uniformly random permutation. Its average must be measured or derived for the specific playlist and rule.</p></section>
+</div><div class="footer">Built for the Music Shuffle probability project · Results are generated locally in your browser.</div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let artistData=[],lastResults={random:[],avoid:[]},running=false;
+let currentMethod=null;
+let currentShuffle=[],playerIndex=-1,playerTimer=null,playerPlaying=false;
+const colors=['#8198a8','#a97872','#b98c65','#c5a2ff','#ff7d8b','#a8d5a2','#f4a6d7','#b8c6df'];
+function setPreset(v){stopPlayer();currentShuffle=[];playerIndex=-1;artistData=v==='1000'?[['Artist A',300],['Artist B',200],['Artist C',150],['Artist D',350]]:[['Artist A',5],['Artist B',5],['Artist C',5],['Artist D',5]];renderArtists();clearResults();$('oneTrack').innerHTML='';$('oneRepeats').textContent='—';$('oneRate').textContent='—';$('oneExplain').textContent='Generate a shuffle to see how adjacent songs are counted.';paintPlayer();updateTheory();}
+function renderArtists(){const root=$('artists');root.innerHTML='';artistData.forEach((a,i)=>{const row=document.createElement('div');row.className='artist-row';row.innerHTML=`<input aria-label="Artist ${i+1} name" value="${esc(a[0])}" maxlength="35"><input aria-label="${esc(a[0])} song count" type="number" min="0" max="10000" value="${a[1]}"><button class="remove" title="Remove artist" aria-label="Remove artist">×</button>`;const [name,count,remove]=row.children;name.addEventListener('input',()=>{artistData[i][0]=name.value;updateTotal();});count.addEventListener('input',()=>{artistData[i][1]=Math.max(0,Math.min(10000,Number(count.value)||0));updateTotal();updateTheory();});remove.addEventListener('click',()=>{if(artistData.length<=1)return;artistData.splice(i,1);renderArtists();updateTheory();});root.appendChild(row);});updateTotal();}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function updateTotal(){const n=artistData.reduce((s,a)=>s+Math.max(0,Number(a[1])||0),0);$('totalSongs').value=n.toLocaleString();$('oneSongs').textContent=n.toLocaleString();$('onePairs').textContent=Math.max(0,n-1).toLocaleString();}
+function playlist(){const songs=[];artistData.forEach(([artist,count],ai)=>{for(let j=1;j<=Number(count);j++)songs.push({artist:String(artist||`Artist ${ai+1}`),title:`${String(artist||`Artist ${ai+1}`)} · Song ${j}`,color:colors[ai%colors.length],id:`${ai}-${j}`});});return songs;}
+function validate(){const songs=playlist();if(!songs.length){alert('Add at least one song to the playlist.');return null;}if(songs.length>5000){alert('For browser performance, please keep the playlist at 5,000 songs or fewer.');return null;}return songs;}
+function fisherYates(source){const a=source.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function avoidShuffle(source){const buckets=new Map();for(const song of source){if(!buckets.has(song.artist))buckets.set(song.artist,[]);buckets.get(song.artist).push(song);}const artists=[...buckets.keys()];const remaining=artists.map(a=>buckets.get(a).slice());let total=source.length,last=null,out=[];while(total){let eligible=[],weight=0;for(let i=0;i<artists.length;i++){const c=remaining[i].length;if(c && (artists[i]!==last || !artists.some((a,j)=>a!==last&&remaining[j].length>0))){eligible.push([i,c]);weight+=c;}}let pick=Math.floor(Math.random()*weight);let chosen=eligible[0][0];for(const [i,c] of eligible){if(pick<c){chosen=i;break;}pick-=c;}const bucket=remaining[chosen];const idx=Math.floor(Math.random()*bucket.length);const song=bucket[idx];bucket[idx]=bucket[bucket.length-1];bucket.pop();out.push(song);last=song.artist;total--;}return out;}
+function countRepeats(a){let n=0;for(let i=1;i<a.length;i++)if(a[i].artist===a[i-1].artist)n++;return n;}
+function renderTrack(a){const root=$('oneTrack');root.innerHTML='';const limit=Math.min(a.length,100);for(let i=0;i<limit;i++){const s=a[i],repeat=i>0&&s.artist===a[i-1].artist;const el=document.createElement('div');el.className='song'+(repeat?' repeat':'');el.dataset.index=i;el.style.borderLeft='4px solid '+s.color;el.innerHTML=`<span class="artist">${esc(s.artist)}</span><small>Song ${i+1}${repeat?(currentMethod==='avoid'?' · unavoidable at this step':' · repeat'):''}</small>`;root.appendChild(el);}if(a.length>limit){const more=document.createElement('div');more.className='song';more.textContent=`+ ${a.length-limit} more songs`;root.appendChild(more);}}
+function stopPlayer(){if(playerTimer){clearInterval(playerTimer);playerTimer=null;}playerPlaying=false;updatePlayIcon();}
+function updatePlayIcon(){const icon=$('playerPlayIcon');if(icon)icon.innerHTML=playerPlaying?'<path d="M7 5h4v14H7zM14 5h4v14h-4z"/>':'<path d="m8 5 11 7-11 7z"/>';}
+function paintPlayer(){const total=currentShuffle.length,idx=playerIndex;const song=idx>=0?currentShuffle[idx]:null;$('playerTitle').textContent=song?song.title:'Your shuffle is ready';$('playerArtist').textContent=song?song.artist:'Generate a shuffle to begin';$('playerState').textContent=song?(idx>0&&song.artist===currentShuffle[idx-1].artist?(currentMethod==='avoid'?'REPEAT · NO OTHER ARTIST REMAINED':'REPEATED ARTIST · SAME AS PREVIOUS'):'TRACK '+(idx+1)+' OF '+total):'NO TRACK SELECTED';$('playerPosition').textContent=(idx<0?0:idx+1)+' / '+total+' songs';$('playerDuration').textContent=total?total.toLocaleString()+' tracks':'—';const seek=$('playerSeek');seek.max=Math.max(0,total-1);seek.value=Math.max(0,idx);seek.style.setProperty('--seek',total>1&&idx>=0?(idx/(total-1)*100)+'%':'0%');$('playerMethodLabel').textContent=(currentShuffle.length?currentMethod:$('method').value)==='random'?'TRUE RANDOM':'REPEAT-AVOIDING';document.querySelectorAll('#oneTrack .song[data-index]').forEach(el=>{const i=Number(el.dataset.index);el.classList.toggle('is-current',i===idx);el.classList.toggle('is-upcoming',idx>=0&&i>idx);});}
+function goToTrack(i){if(!currentShuffle.length)return;playerIndex=Math.max(0,Math.min(currentShuffle.length-1,i));paintPlayer();if(playerIndex===currentShuffle.length-1&&playerPlaying)stopPlayer();}
+function startPlayer(){if(!currentShuffle.length){oneShuffle();if(!currentShuffle.length)return;}if(playerIndex<0||playerIndex>=currentShuffle.length-1)playerIndex=0;playerPlaying=true;updatePlayIcon();paintPlayer();playerTimer=setInterval(()=>{if(playerIndex<currentShuffle.length-1){playerIndex++;paintPlayer();}else stopPlayer();},900);}
+function oneShuffle(){const p=validate();if(!p)return;stopPlayer();currentMethod=$('method').value;const a=currentMethod==='random'?fisherYates(p):avoidShuffle(p);currentShuffle=a;playerIndex=0;const r=countRepeats(a);$('oneRepeats').textContent=r.toLocaleString();$('oneRate').textContent=(a.length>1?100*r/(a.length-1):0).toFixed(1)+'%';$('oneExplain').textContent=`This shuffle contains ${r} adjacent same-artist pair${r===1?'':'s'} among ${Math.max(0,a.length-1)} neighboring pairs. ${a.length>100?'The first 100 songs are displayed.':''}`;if(currentMethod==='avoid')$('oneExplain').textContent+=' '+(r?'At each repeated pair, no songs from a different artist remained. The algorithm avoids repeats when possible, but does not guarantee zero repeats.':'No adjacent artist repeats occurred in this shuffle.');renderTrack(a);paintPlayer();} 
+function expected(p){const counts=new Map();p.forEach(s=>counts.set(s.artist,(counts.get(s.artist)||0)+1));const n=p.length;if(n<2)return 0;let sum=0;for(const c of counts.values())sum+=c*(c-1);return sum/n;}
+function updateTheory(){const p=playlist(),e=expected(p);$('theory').textContent=p.length<2?'0':e.toFixed(3);$('theoryExplain').textContent=`For ${p.length.toLocaleString()} songs, E(R) = Σ nᵢ(nᵢ − 1) / N = ${e.toFixed(3)}. This is the theoretical expected count for a uniformly random shuffle.`;}
+function clearResults(){lastResults={random:[],avoid:[]};$('done').textContent='0';$('meanRandom').textContent='—';$('meanAvoid').textContent='—';$('randomSummary').textContent='Run a simulation to see the true-random average.';$('avoidSummary').textContent='Run a simulation to see the repeat-avoiding average.';$('status').textContent='Ready. Choose a trial count and run the experiment.';$('progressBar').style.width='0%';drawCharts();}
+function mean(a){return a.length?a.reduce((x,y)=>x+y,0)/a.length:0;}
+function runSim(){if(running)return;const p=validate();if(!p)return;const trials=Number($('trials').value),mode=$('simMethod').value;running=true;$('runSim').disabled=true;$('status').textContent='Running simulations…';$('progressBar').style.width='0%';lastResults={random:[],avoid:[]};let t=0;const batch=100;function step(){const end=Math.min(trials,t+batch);for(;t<end;t++){if(mode!=='avoid')lastResults.random.push(countRepeats(fisherYates(p)));if(mode!=='random')lastResults.avoid.push(countRepeats(avoidShuffle(p)));}const pct=100*t/trials;$('progressBar').style.width=pct+'%';$('status').textContent=`Completed ${t.toLocaleString()} of ${trials.toLocaleString()} trials (${pct.toFixed(0)}%).`;if(t<trials){setTimeout(step,0);}else{finish();}}step();}
+function finish(){running=false;$('runSim').disabled=false;const r=lastResults.random,a=lastResults.avoid;const e=expected(playlist());$('done').textContent=Math.max(r.length,a.length).toLocaleString();$('meanRandom').textContent=r.length?mean(r).toFixed(3):'—';$('meanAvoid').textContent=a.length?mean(a).toFixed(3):'—';$('randomSummary').textContent=r.length?`Across ${r.length.toLocaleString()} trials, the average was ${mean(r).toFixed(3)} repetitions; theoretical expectation: ${e.toFixed(3)}.`:'True-random simulation was not selected.';$('avoidSummary').textContent=a.length?`Across ${a.length.toLocaleString()} trials, the average was ${mean(a).toFixed(3)} repetitions. This is an empirical average for this playlist and algorithm.`:'Repeat-avoiding simulation was not selected.';$('status').textContent='Simulation complete. Compare the simulated mean with the theoretical value.';drawCharts();}
+function canvasSetup(id){
+  const c=$(id),rect=c.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
+  const w=rect.width||300,h=rect.height||240;
+  c.width=Math.round(w*dpr);c.height=Math.round(h*dpr);
+  const ctx=c.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);return {ctx,w,h};
+}
+function drawCharts(){drawAverage();drawHistogram();}
+function tickStep(span,desired=4){const raw=Math.max(span/desired,0.000001),pow=10**Math.floor(Math.log10(raw));return [1,2,5,10].map(x=>x*pow).find(x=>x>=raw);}
+function axisText(ctx,text,x,y,align='left'){ctx.fillStyle='#62585e';ctx.font='11px Arial,sans-serif';ctx.textAlign=align;ctx.fillText(text,x,y);ctx.textAlign='left';}
+function gridLine(ctx,x1,y1,x2,y2){ctx.strokeStyle='#d8c7c2';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();}
+function drawAverage(){
+  const {ctx,w,h}=canvasSetup('averageChart');ctx.clearRect(0,0,w,h);
+  const data=lastResults.random,e=expected(playlist());
+  if(!data.length){axisText(ctx,'Run true-random trials to display the running average.',8,25);return;}
+  const p={l:46,r:12,t:42,b:42},n=data.length,vals=[];let sum=0;
+  data.forEach((v,i)=>{sum+=v;vals.push(sum/(i+1));});
+  const lo=Math.min(e,...vals),hi=Math.max(e,...vals),margin=Math.max(.5,(hi-lo)*.08);
+  const step=tickStep(hi-lo+2*margin),minY=Math.max(0,Math.floor((lo-margin)/step)*step),maxY=Math.max(minY+step,Math.ceil((hi+margin)/step)*step);
+  const x=i=>p.l+i/(n-1||1)*(w-p.l-p.r),y=v=>h-p.b-(v-minY)/(maxY-minY)*(h-p.t-p.b);
+  axisText(ctx,'Average repetitions per shuffle',p.l,12);
+  ctx.strokeStyle='#927287';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(p.l,25);ctx.lineTo(p.l+17,25);ctx.stroke();axisText(ctx,'Running mean',p.l+22,29);
+  const lx=Math.max(p.l+115,w-139);ctx.strokeStyle='#8e5d25';ctx.setLineDash([5,4]);ctx.beginPath();ctx.moveTo(lx,25);ctx.lineTo(lx+17,25);ctx.stroke();ctx.setLineDash([]);axisText(ctx,'Expected '+e.toFixed(2),lx+22,29);
+  for(let v=minY;v<=maxY+step*.0001;v+=step){gridLine(ctx,p.l,y(v),w-p.r,y(v));axisText(ctx,v.toLocaleString(undefined,{maximumFractionDigits:3}),p.l-6,y(v)+4,'right');}
+  ctx.strokeStyle='#927287';ctx.lineWidth=2;ctx.beginPath();vals.forEach((v,i)=>i?ctx.lineTo(x(i),y(v)):ctx.moveTo(x(i),y(v)));ctx.stroke();
+  ctx.setLineDash([5,4]);ctx.strokeStyle='#8e5d25';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(p.l,y(e));ctx.lineTo(w-p.r,y(e));ctx.stroke();ctx.setLineDash([]);
+  const tickIndices=[0,...[.25,.5,.75].map(f=>Math.round((n-1)*f)),n-1];
+  [...new Set(tickIndices)].forEach((i)=>{gridLine(ctx,x(i),h-p.b,x(i),h-p.b+4);axisText(ctx,(i+1).toLocaleString(),x(i),h-p.b+16,i===0?'left':i===n-1?'right':'center');});
+  axisText(ctx,'Number of trials', (p.l+w-p.r)/2,h-5,'center');
+}
+function drawHistogram(){
+  const {ctx,w,h}=canvasSetup('histChart');ctx.clearRect(0,0,w,h);
+  const isRandom=lastResults.random.length>0,data=isRandom?lastResults.random:lastResults.avoid;
+  if(!data.length){axisText(ctx,'Run trials to display the distribution of outcomes.',8,25);return;}
+  const lo=Math.min(...data),hi=Math.max(...data),span=hi-lo+1,binWidth=Math.max(1,Math.ceil(span/40));
+  const bins=Array(Math.ceil(span/binWidth)).fill(0);data.forEach(v=>bins[Math.floor((v-lo)/binWidth)]++);
+  const p={l:46,r:12,t:35,b:48},step=Math.max(1,tickStep(Math.max(...bins))),maxY=Math.ceil(Math.max(...bins)/step)*step;
+  const slot=(w-p.l-p.r)/bins.length,y=v=>h-p.b-v/maxY*(h-p.t-p.b);
+  axisText(ctx,(isRandom?'True Random':'Repeat-Avoiding')+' · '+data.length.toLocaleString()+' trials',p.l,12);
+  axisText(ctx,'Frequency (trials)',p.l,26);
+  for(let v=0;v<=maxY;v+=step){gridLine(ctx,p.l,y(v),w-p.r,y(v));axisText(ctx,v.toLocaleString(),p.l-6,y(v)+4,'right');}
+  bins.forEach((v,i)=>{const x=p.l+i*slot;ctx.fillStyle='#8198a8';ctx.fillRect(x+slot*.08,y(v),slot*.84,Math.max(0,h-p.b-y(v)));});
+  const maxLabels=Math.max(2,Math.floor((w-p.l-p.r)/(binWidth===1?34:63))),stride=Math.max(1,Math.ceil(bins.length/maxLabels));
+  for(let i=0;i<bins.length;i+=stride){const a=lo+i*binWidth,b=Math.min(hi,a+binWidth-1);axisText(ctx,a===b?String(a):a+'–'+b,p.l+(i+.5)*slot,h-p.b+16,'center');}
+  axisText(ctx,'Adjacent same-artist pairs per shuffle',(p.l+w-p.r)/2,h-5,'center');
+}
+$('playerPlay').addEventListener('click',()=>playerPlaying?stopPlayer():startPlayer());$('playerPrev').addEventListener('click',()=>{stopPlayer();goToTrack(Math.max(0,playerIndex-1));});$('playerNext').addEventListener('click',()=>{stopPlayer();goToTrack(playerIndex+1);});$('playerReplay').addEventListener('click',()=>{stopPlayer();if(!currentShuffle.length){oneShuffle();return;}playerIndex=0;paintPlayer();startPlayer();});$('playerShuffleMode').addEventListener('click',()=>{$('method').value=$('method').value==='random'?'avoid':'random';paintPlayer();});$('playerSeek').addEventListener('input',e=>{stopPlayer();goToTrack(Number(e.target.value));});$('method').addEventListener('change',paintPlayer);
+$('preset').addEventListener('change',e=>setPreset(e.target.value));$('reset').addEventListener('click',()=>setPreset($('preset').value));$('addArtist').addEventListener('click',()=>{artistData.push([`Artist ${artistData.length+1}`,1]);renderArtists();updateTheory();});$('shuffleOnce').addEventListener('click',oneShuffle);$('runSim').addEventListener('click',runSim);$('clearSim').addEventListener('click',clearResults);document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));$('randomTab').classList.toggle('hidden',b.dataset.tab!=='randomTab');$('avoidTab').classList.toggle('hidden',b.dataset.tab!=='avoidTab');}));window.addEventListener('resize',drawCharts);
+
+function buildStages(){
+  const host=$('stageHost');
+  const original=[...host.querySelectorAll(':scope > .panel')];
+  if(original.length!==6)return;
+  const groups=[[0],[1,5],[2,3,4]];
+  const labels=['Playlist setup','Single shuffle','Monte Carlo results'];
+  groups.forEach((indices,index)=>{
+    const view=document.createElement('section');view.className='stage-view'+(index===0?' active':'');view.dataset.stageView=String(index);view.setAttribute('aria-label',labels[index]);
+    const grid=document.createElement('div');grid.className='stage-grid';
+    indices.forEach(i=>grid.appendChild(original[i]));
+    view.appendChild(grid);
+    const controls=document.createElement('div');controls.className='stage-controls';
+    const back=document.createElement('button');back.type='button';back.className='secondary';back.textContent=index===0?'Start here':'← Previous';back.disabled=index===0;back.addEventListener('click',()=>showStage(index-1));
+    const caption=document.createElement('span');caption.className='stage-caption';caption.textContent=`STEP 0${index+1} / 03 · ${labels[index].toUpperCase()}`;
+    const next=document.createElement('button');next.type='button';next.textContent=index===2?'Back to playlist':'Continue →';next.addEventListener('click',()=>showStage(index===2?0:index+1));
+    controls.append(back,caption,next);view.appendChild(controls);host.appendChild(view);
+  });
+  host.className='';
+}
+function showStage(index){
+  const views=[...document.querySelectorAll('[data-stage-view]')];
+  if(index<0||index>=views.length)return;
+  views.forEach((view,i)=>{view.classList.toggle('active',i===index);view.setAttribute('aria-hidden',i===index?'false':'true');});
+  document.querySelectorAll('[data-stage]').forEach((button,i)=>{button.classList.toggle('active',i===index);button.classList.toggle('complete',i<index);if(i===index)button.setAttribute('aria-current','step');else button.removeAttribute('aria-current');});
+  if(index===2){requestAnimationFrame(()=>drawCharts());}
+  const nav=document.querySelector('.stage-nav');
+  if(nav && window.matchMedia('(max-width: 780px)').matches)nav.scrollIntoView({behavior:'smooth',block:'start'});
+}
+document.querySelectorAll('[data-stage]').forEach(button=>button.addEventListener('click',()=>showStage(Number(button.dataset.stage))));
+buildStages();
+
+setPreset('20');drawCharts();
+</script></body></html>
